@@ -92,9 +92,13 @@ def open_resource(name):
     if zoneinfo_dir is not None:
         filename = os.path.join(zoneinfo_dir, *name_parts)
     else:
-        filename = os.path.join(os.path.dirname(__file__),
-                                'zoneinfo', *name_parts)
-        if not os.path.exists(filename):
+        try:
+            filename = os.path.join(os.path.dirname(__file__),
+                                    'zoneinfo', *name_parts)
+        except NameError:
+            filename = None
+
+        if filename is None or not os.path.exists(filename):
             # http://bugs.launchpad.net/bugs/383171 - we avoid using this
             # unless absolutely necessary to help when a broken version of
             # pkg_resources is installed.
